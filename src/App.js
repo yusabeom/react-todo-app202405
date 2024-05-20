@@ -10,13 +10,19 @@ import Join from './components/user/Join';
 function App() {
   return (
     <>
-      <Header />
-      <Routes>
-        <Route path='/' element={<TodoTemplate />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/join' element={<Join />} />
-      </Routes>
-      <Footer />
+      <div className='wrapper'>
+        <Header />
+
+        <div className='content-wrapper'>
+          <Routes>
+            <Route path='/' element={<TodoTemplate />} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/join' element={<Join />} />
+          </Routes>
+        </div>
+
+        <Footer />
+      </div>
     </>
   );
 }
