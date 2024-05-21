@@ -4,11 +4,23 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import React from 'react';
+import React, { useContext } from 'react';
 import '../../scss/Header.scss';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import AuthContext from '../../utils/AuthContext';
 
 const Header = () => {
+  const redirection = useNavigate();
+  // AuthContext에서 로그인 상태를 가져옵니다
+  const { isLoggedIn, userName, onLogout } =
+    useContext(AuthContext);
+
+  // 로그아웃 핸들러
+  const logoutHandler = () => {
+    onLogout();
+    redirection('/login');
+  };
+
   return (
     <AppBar
       position='fixed'
@@ -27,15 +39,27 @@ const Header = () => {
               }}
             >
               <Typography variant='h4'>
-                오늘의 할일
+                {isLoggedIn ? userName + '님' : '오늘'}의
+                할일
               </Typography>
             </div>
           </Grid>
 
           <Grid item>
             <div className='btn-group'>
-              <Link to='/login'>로그인</Link>
-              <Link to='/join'>회원가입</Link>
+              {isLoggedIn ? (
+                <button
+                  className='logout-btn'
+                  onClick={logoutHandler}
+                >
+                  로그아웃
+                </button>
+              ) : (
+                <>
+                  <Link to='/login'>로그인</Link>
+                  <Link to='/join'>회원가입</Link>
+                </>
+              )}
             </div>
           </Grid>
         </Grid>

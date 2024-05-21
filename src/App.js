@@ -6,10 +6,12 @@ import Header from './components/layout/Header';
 import TodoTemplate from './components/todo/TodoTemplate';
 import Login from './components/user/Login';
 import Join from './components/user/Join';
+import { AuthContextProvider } from './utils/AuthContext';
 
 function App() {
   return (
-    <>
+    // 데이터를 전달하고자 하는 자식 컴포넌트를 Provider로 감쌉니다.
+    <AuthContextProvider>
       <div className='wrapper'>
         <Header />
 
@@ -23,7 +25,7 @@ function App() {
 
         <Footer />
       </div>
-    </>
+    </AuthContextProvider>
   );
 }
 
