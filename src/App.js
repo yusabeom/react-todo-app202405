@@ -1,12 +1,12 @@
-import { Route, Routes } from 'react-router-dom';
 import './App.css';
-
+import TodoTemplate from './components/todo/TodoTemplate';
 import Footer from './components/layout/Footer';
 import Header from './components/layout/Header';
-import TodoTemplate from './components/todo/TodoTemplate';
+import { Route, Routes } from 'react-router-dom';
 import Login from './components/user/Login';
 import Join from './components/user/Join';
 import { AuthContextProvider } from './utils/AuthContext';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
@@ -14,7 +14,6 @@ function App() {
     <AuthContextProvider>
       <div className='wrapper'>
         <Header />
-
         <div className='content-wrapper'>
           <Routes>
             <Route path='/' element={<TodoTemplate />} />
@@ -22,11 +21,9 @@ function App() {
             <Route path='/join' element={<Join />} />
           </Routes>
         </div>
-
         <Footer />
       </div>
     </AuthContextProvider>
   );
 }
-
 export default App;

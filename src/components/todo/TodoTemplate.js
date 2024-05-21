@@ -4,15 +4,17 @@ import TodoMain from './TodoMain';
 import TodoInput from './TodoInput';
 import '../../scss/TodoTemplate.scss';
 import { useNavigate } from 'react-router-dom';
+import { Spinner } from 'reactstrap';
 
 const TodoTemplate = () => {
   const redirection = useNavigate();
-
   // 백엔드 서버에 할 일 목록(json)을 요청(fetch)해서 받아와야 함.
   const API_BASE_URL = 'http://localhost:8181/api/todos';
-
   // todos 배열을 상태 관리
   const [todos, setTodos] = useState([]);
+
+  // 로딩 상태값 관리 (처음에는 로딩이 무조건 필요하기 때문에 true -> 로딩 끝나면 false로 전환)
+  const [loading, setLoading] = useState(true);
 
   // 로그인 인증 토큰 얻어오기
   const token = localStorage.getItem('ACCESS_TOKEN');
@@ -23,7 +25,6 @@ const TodoTemplate = () => {
     // JWT에 대한 인증 토큰이라는 타입을 선언.
     Authorization: 'Bearer ' + token,
   };
-
   /*
   TodoInput에게 todoText를 받아오는 함수
   자식 컴포넌트가 부모 컴포넌트에게 데이터를 전달할 때는
@@ -35,16 +36,13 @@ const TodoTemplate = () => {
     const newTodo = {
       title: todoText,
     };
-
     const res = await fetch(API_BASE_URL, {
       method: 'POST',
       headers: requestHeader,
       body: JSON.stringify(newTodo),
     });
-
     const json = await res.json();
     setTodos(json.todos);
-
     /*
     fetch(API_BASE_URL, {
       method: 'POST',
@@ -92,7 +90,6 @@ const TodoTemplate = () => {
   // 체크가 안 된 할 일의 개수를 카운트 하기
   const countRestTodo = () =>
     todos.filter((todo) => !todo.done).length;
-
   useEffect(() => {
     // 페이지가 처음 렌더링 됨과 동시에 할 일 목록을 서버에 요청해서 뿌려 주겠습니다.
     fetch(API_BASE_URL, {
@@ -111,10 +108,14 @@ const TodoTemplate = () => {
       .then((json) => {
         // fetch를 통해 받아온 데이터를 상태 변수에 할당
         if (json) setTodos(json.todos);
+
+        // 로딩 완료 처리
+        setLoading(false);
       });
   }, []);
 
-  return (
+  // 로딩이 끝난 후 보여줄 컴포넌트
+  const loadEndedPage = (
     <div className='TodoTemplate'>
       <TodoHeader count={countRestTodo} />
       <TodoMain
@@ -125,5 +126,15 @@ const TodoTemplate = () => {
       <TodoInput addTodo={addTodo} />
     </div>
   );
+
+  // 로딩 중일 때 보여줄 컴포넌트
+  const loadingPage = (
+    <div className='loading'>
+      <Spinner color='danger'>loading...</Spinner>
+    </div>
+  );
+
+  return <>{loading ? loadingPage : loadEndedPage}</>;
 };
+
 export default TodoTemplate;
