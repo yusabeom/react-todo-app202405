@@ -1,13 +1,20 @@
 const handleError = (error, onLogout, redirection) => {
   console.log('handleError 호출됨!');
   if (error.response && error.response.status === 401) {
-    console.log('onLogout: ', onLogout);
-    console.log('redirection: ', redirection);
-    alert(
-      '로그인 시간이 만료되었습니다. 다시 로그인 해 주세요.',
-    );
-    onLogout();
-    redirection('/login');
+    if (error.response.data.message === 'INVALID_AUTH') {
+      alert('로그인이 필요한 서비스 입니다.');
+      redirection('/login');
+    } else if (
+      error.response.data.message === 'EXPIRED_TOKEN'
+    ) {
+      console.log('onLogout: ', onLogout);
+      console.log('redirection: ', redirection);
+      alert(
+        '로그인 시간이 만료되었습니다. 다시 로그인 해 주세요.',
+      );
+      onLogout();
+      redirection('/login');
+    }
   } else if (
     error.response &&
     error.response.status === 400
@@ -20,7 +27,6 @@ const handleError = (error, onLogout, redirection) => {
     // 403 에러에 대한 내용...
   }
 };
-
 const handleRequest = async (
   requestFunc,
   onSuccess,
@@ -37,5 +43,4 @@ const handleRequest = async (
     handleError(error, onLogout, redirection);
   }
 };
-
 export default handleRequest;

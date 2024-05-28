@@ -40,23 +40,16 @@ const TodoTemplate = () => {
       redirection,
     );
   };
-
   // 할 일 삭제 처리 함수
   const removeTodo = async (id) => {
     handleRequest(
       () => axiosInstance.delete(`${API_BASE_URL}/${id}`),
       (data) => setTodos(data.todos),
-      (error) => {
-        if (error.response && error.response === 401) {
-          alert(
-            '로그인 시간이 만료되었습니다. 다시 로그인 해 주세요.',
-          );
-          onLogout();
-          redirection('/login');
-        }
-      },
+      onLogout,
+      redirection,
     );
   };
+
   // 할 일 체크 처리 함수
   const checkTodo = (id, done) => {
     handleRequest(
@@ -66,17 +59,11 @@ const TodoTemplate = () => {
           done: !done,
         }),
       (data) => setTodos(data.todos),
-      (error) => {
-        if (error.response && error.response === 401) {
-          alert(
-            '로그인 시간이 만료되었습니다. 다시 로그인 해 주세요.',
-          );
-          onLogout();
-          redirection('/login');
-        }
-      },
+      onLogout,
+      redirection,
     );
   };
+
   // 체크가 안 된 할 일의 개수를 카운트 하기
   const countRestTodo = () =>
     todos.filter((todo) => !todo.done).length;
@@ -89,19 +76,11 @@ const TodoTemplate = () => {
         localStorage.setItem('USER_ROLE', data.role);
         setToken(data.token);
       },
-      (error) => {
-        if (error.response && error.response === 401) {
-          alert(
-            '로그인 시간이 만료되었습니다. 다시 로그인 해 주세요.',
-          );
-          onLogout();
-          redirection('/login');
-        } else if (error.response === 400) {
-          alert('이미 프리미엄 회원입니다.');
-        }
-      },
+      onLogout,
+      redirection,
     );
   };
+
   useEffect(() => {
     // 페이지가 처음 렌더링 됨과 동시에 할 일 목록을 서버에 요청해서 뿌려 주겠습니다.
     handleRequest(
@@ -110,18 +89,11 @@ const TodoTemplate = () => {
         setTodos(data.todos);
         setLoading(false);
       },
-      (error) => {
-        console.log(error.response);
-        if (error.response && error.response === 401) {
-          alert(
-            '로그인 시간이 만료되었습니다. 다시 로그인 해 주세요.',
-          );
-          onLogout();
-          redirection('/login');
-        }
-      },
+      onLogout,
+      redirection,
     );
   }, []);
+
   // 로딩이 끝난 후 보여줄 컴포넌트
   const loadEndedPage = (
     <div className='TodoTemplate'>
