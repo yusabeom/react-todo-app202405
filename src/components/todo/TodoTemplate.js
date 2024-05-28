@@ -17,11 +17,9 @@ import {
 import axiosInstance from '../../config/axios-config';
 import handleRequest from '../../utils/handleRequest';
 import AuthContext from '../../utils/AuthContext';
-
 const TodoTemplate = () => {
   const redirection = useNavigate();
   const { onLogout } = useContext(AuthContext);
-
   // 백엔드 서버에 할 일 목록(json)을 요청(fetch)해서 받아와야 함.
   const API_BASE_URL = BASE + TODO;
   const API_USER_URL = BASE + USER;
@@ -29,9 +27,7 @@ const TodoTemplate = () => {
   const [todos, setTodos] = useState([]);
   // 로딩 상태값 관리 (처음에는 로딩이 무조건 필요하기 때문에 true -> 로딩 끝나면 false로 전환)
   const [loading, setLoading] = useState(true);
-
   const [token, setToken] = useState('');
-
   // 할 일 추가 함수
   const addTodo = async (todoText) => {
     const newTodo = {
@@ -40,15 +36,8 @@ const TodoTemplate = () => {
     handleRequest(
       () => axiosInstance.post(API_BASE_URL, newTodo),
       (data) => setTodos(data.todos),
-      (error) => {
-        if (error.response && error.response === 401) {
-          alert(
-            '로그인 시간이 만료되었습니다. 다시 로그인 해 주세요.',
-          );
-          onLogout();
-          redirection('/login');
-        }
-      },
+      onLogout,
+      redirection,
     );
   };
 
@@ -68,7 +57,6 @@ const TodoTemplate = () => {
       },
     );
   };
-
   // 할 일 체크 처리 함수
   const checkTodo = (id, done) => {
     handleRequest(
@@ -89,11 +77,9 @@ const TodoTemplate = () => {
       },
     );
   };
-
   // 체크가 안 된 할 일의 개수를 카운트 하기
   const countRestTodo = () =>
     todos.filter((todo) => !todo.done).length;
-
   // 비동기 방식 등급 승격 함수
   const fetchPromote = async () => {
     handleRequest(
@@ -116,7 +102,6 @@ const TodoTemplate = () => {
       },
     );
   };
-
   useEffect(() => {
     // 페이지가 처음 렌더링 됨과 동시에 할 일 목록을 서버에 요청해서 뿌려 주겠습니다.
     handleRequest(
@@ -137,7 +122,6 @@ const TodoTemplate = () => {
       },
     );
   }, []);
-
   // 로딩이 끝난 후 보여줄 컴포넌트
   const loadEndedPage = (
     <div className='TodoTemplate'>
